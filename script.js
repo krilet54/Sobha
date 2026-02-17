@@ -46,7 +46,7 @@ const floorData = {
   }
 };
 
-let exitIntentShown = false;
+let leadModalPromptShown = false;
 let toastTimer;
 
 function toggleHeaderState() {
@@ -78,6 +78,7 @@ function closeModal(modal) {
 }
 
 function openLeadModal(reason = 'General Enquiry') {
+  leadModalPromptShown = true;
   if (leadReason) {
     leadReason.value = reason;
   }
@@ -278,11 +279,16 @@ leadForms.forEach((form) => {
   });
 });
 
+// Timed popup trigger for lead capture.
+window.setTimeout(() => {
+  if (leadModalPromptShown) return;
+  openLeadModal('Limited Period Offer');
+}, 15000);
+
 // Desktop exit intent popup trigger for lead capture.
 document.addEventListener('mouseleave', (event) => {
-  if (exitIntentShown || window.innerWidth < 992) return;
+  if (leadModalPromptShown || window.innerWidth < 992) return;
   if (event.clientY > 2) return;
 
-  exitIntentShown = true;
   openLeadModal('Exit Intent Offer');
 });

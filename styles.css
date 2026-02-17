@@ -154,7 +154,7 @@ p {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.4rem;
 }
 
 .brand-logo {
@@ -181,16 +181,18 @@ p {
 
 .brand-text {
   display: grid;
+  line-height: 1.1;
 }
 
 .brand-text strong {
-  letter-spacing: 0.08em;
-  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  font-size: 1.15rem;
+  font-family: "Cormorant Garamond", serif;
 }
 
 .brand-text small {
-  font-size: 0.66rem;
-  letter-spacing: 0.1em;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #c8ccd2;
 }
@@ -452,6 +454,15 @@ p {
   accent-color: var(--gold);
 }
 
+.consent a {
+  color: var(--gold-soft);
+  text-decoration: underline;
+}
+
+.consent a:hover {
+  color: #f5deaf;
+}
+
 .floating-contact {
   position: absolute;
   right: 0.85rem;
@@ -565,6 +576,10 @@ p {
 .about .kicker {
   text-transform: none;
   letter-spacing: 0.05em;
+}
+
+.about .section-title {
+  margin-top: -0.9rem;
 }
 
 .about-copy p {
@@ -713,14 +728,13 @@ p {
   transform: scale(1.06);
 }
 
-.amenity-pool { --amenity-image: url("https://images.pexels.com/photos/1746876/pexels-photo-1746876.jpeg?auto=compress&cs=tinysrgb&w=1400"); }
-.amenity-gym { --amenity-image: url("https://images.pexels.com/photos/8933584/pexels-photo-8933584.jpeg?auto=compress&cs=tinysrgb&w=1400"); }
-.amenity-kids { --amenity-image: url("https://images.pexels.com/photos/19230086/pexels-photo-19230086.jpeg?auto=compress&cs=tinysrgb&w=1400"); }
-.amenity-jogging { --amenity-image: url("https://images.pexels.com/photos/35303097/pexels-photo-35303097.jpeg?auto=compress&cs=tinysrgb&w=1400"); }
-.amenity-skating { --amenity-image: url("https://images.pexels.com/photos/6539355/pexels-photo-6539355.jpeg?auto=compress&cs=tinysrgb&w=1400"); }
-.amenity-tt { --amenity-image: url("https://images.pexels.com/photos/13793163/pexels-photo-13793163.jpeg?auto=compress&cs=tinysrgb&w=1400"); }
-.amenity-clubhouse { --amenity-image: url("https://images.pexels.com/photos/35812004/pexels-photo-35812004.jpeg?auto=compress&cs=tinysrgb&w=1400"); }
-.amenity-senior { --amenity-image: url("https://images.pexels.com/photos/20364062/pexels-photo-20364062.jpeg?auto=compress&cs=tinysrgb&w=1400"); }
+.amenity-pool { --amenity-image: url("sobha brdidgekeys images/amenities/pool.jpg"); }
+.amenity-kids { --amenity-image: url("sobha brdidgekeys images/amenities/kids-play-area.jpg"); }
+.amenity-senior { --amenity-image: url("sobha brdidgekeys images/amenities/senior-citizen-park.jpg"); }
+.amenity-mall { --amenity-image: url("sobha brdidgekeys images/amenities/mall.jpg"); }
+.amenity-retail { --amenity-image: url("sobha brdidgekeys images/amenities/retail-plazas.jpg"); }
+.amenity-tennis { --amenity-image: url("sobha brdidgekeys images/amenities/tennis-court.jpg"); }
+.amenity-outdoor-gym { --amenity-image: url("sobha brdidgekeys images/amenities/outdoor-gym.jpg"); }
 
 .floor-tabs {
   display: flex;
@@ -889,6 +903,29 @@ p {
   padding: 1.4rem;
 }
 
+.legal {
+  background: linear-gradient(180deg, #0a0f14 0%, #0e141b 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.legal-shell {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.legal-shell p {
+  color: #d6dbe1;
+}
+
+.legal-shell strong {
+  color: #f2d9a8;
+}
+
+.legal-shell a {
+  color: var(--gold-soft);
+  text-decoration: underline;
+}
+
 .lead-form-wide {
   grid-template-columns: 1fr;
 }
@@ -921,6 +958,14 @@ p {
   border-radius: 10px;
   border: 1px solid rgba(226, 199, 143, 0.35);
   background: #e6cf9f;
+}
+
+.footer-brand-name {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2rem;
+  color: #f2e4c2;
+  line-height: 1;
 }
 
 .footer-phone {
@@ -1167,7 +1212,7 @@ p {
   }
 
   .about-copy {
-    padding-top: 0.75rem;
+    padding-top: 0;
   }
 
   .amenity-grid {
@@ -1196,7 +1241,6 @@ p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .lead-form-wide textarea,
   .lead-form-wide .consent,
   .lead-form-wide .lead-actions {
     grid-column: span 2;
