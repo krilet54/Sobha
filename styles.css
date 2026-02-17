@@ -69,17 +69,19 @@ textarea {
 }
 
 .kicker {
-  display: inline-block;
-  margin: 0 0 1rem;
+  display: block;
+  width: max-content;
+  margin: 0 auto 1rem;
+  text-align: center;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 0.84rem;
   font-weight: 700;
   color: #f4dfb6;
-  padding: 0.34rem 0.78rem;
-  border: 1px solid rgba(226, 199, 143, 0.45);
-  border-radius: 999px;
-  background: linear-gradient(120deg, rgba(226, 199, 143, 0.2), rgba(226, 199, 143, 0.06));
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 h1,
@@ -101,22 +103,22 @@ h2 {
   line-height: 1.05;
   margin-bottom: 1.35rem;
   position: relative;
-  display: inline-block;
+  display: block;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .section-title::after {
   content: "";
   position: absolute;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: -0.45rem;
   width: 96px;
   height: 2px;
   background: linear-gradient(90deg, var(--gold), rgba(226, 199, 143, 0.15));
-}
-
-.section-title.center::after {
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 p {
