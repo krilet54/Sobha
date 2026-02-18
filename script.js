@@ -5,6 +5,7 @@ const navLinks = [...document.querySelectorAll('.site-nav a[href^="#"]')];
 const revealItems = document.querySelectorAll('.reveal');
 const leadModal = document.getElementById('leadModal');
 const floorModal = document.getElementById('floorModal');
+const legalModal = document.getElementById('legalModal');
 const leadReason = document.getElementById('leadReason');
 const floorInterest = document.getElementById('floorInterest');
 const toast = document.getElementById('toast');
@@ -17,6 +18,9 @@ const floorModalText = document.getElementById('floorModalText');
 const heroBackground = document.querySelector('.hero-bg');
 const floorUnlockArea = document.getElementById('floorUnlockArea');
 const backToTopLink = document.getElementById('backToTop');
+const legalTabs = [...document.querySelectorAll('.legal-tab')];
+const legalPanels = [...document.querySelectorAll('[data-legal-content]')];
+const legalLinks = [...document.querySelectorAll('a[href="#privacy-policy"], a[href="#terms-conditions"]')];
 
 const floorData = {
   master: {
@@ -83,6 +87,66 @@ function openLeadModal(reason = 'General Enquiry') {
     leadReason.value = reason;
   }
   openModal(leadModal);
+}
+
+function isLegalRoute(hashValue = window.location.hash) {
+  return hashValue === '#privacy-policy' || hashValue === '#terms-conditions';
+}
+
+function normalizeLegalTarget(target = 'privacy-policy') {
+  return target === 'terms-conditions' ? 'terms-conditions' : 'privacy-policy';
+}
+
+function setLegalContent(target) {
+  const current = normalizeLegalTarget(target);
+
+  legalTabs.forEach((tab) => {
+    const isActive = tab.getAttribute('data-legal-target') === current;
+    tab.classList.toggle('is-active', isActive);
+    tab.setAttribute('aria-selected', String(isActive));
+  });
+
+  legalPanels.forEach((panel) => {
+    const isActive = panel.getAttribute('data-legal-content') === current;
+    panel.classList.toggle('is-active', isActive);
+    panel.hidden = !isActive;
+  });
+
+  return current;
+}
+
+function updateLegalUrlHash(nextHash = '') {
+  const nextUrl = nextHash
+    ? `${window.location.pathname}${window.location.search}#${nextHash}`
+    : `${window.location.pathname}${window.location.search}`;
+  window.history.replaceState(null, '', nextUrl);
+}
+
+function openLegalModal(target = 'privacy-policy', updateHash = true) {
+  const current = setLegalContent(target);
+  openModal(legalModal);
+  if (updateHash) {
+    updateLegalUrlHash(current);
+  }
+}
+
+function closeLegalModal(updateHash = true) {
+  closeModal(legalModal);
+  if (updateHash && isLegalRoute()) {
+    updateLegalUrlHash('');
+  }
+}
+
+function syncLegalModalFromHash() {
+  if (!isLegalRoute()) {
+    if (legalModal && legalModal.classList.contains('is-open')) {
+      closeLegalModal(false);
+    }
+    return;
+  }
+
+  const target = window.location.hash.replace('#', '');
+  openLegalModal(target, false);
 }
 
 function showToast(message) {
@@ -203,15 +267,24 @@ document.querySelectorAll('[data-open-popup]').forEach((trigger) => {
 document.querySelectorAll('[data-close-modal]').forEach((closeButton) => {
   closeButton.addEventListener('click', () => {
     const modalId = closeButton.getAttribute('data-close-modal');
+    if (modalId === 'legalModal') {
+      closeLegalModal(true);
+      return;
+    }
+
     const modal = document.getElementById(modalId);
     closeModal(modal);
   });
 });
 
-[leadModal, floorModal].forEach((modal) => {
+[leadModal, floorModal, legalModal].forEach((modal) => {
   if (!modal) return;
   modal.addEventListener('click', (event) => {
     if (event.target === modal) {
+      if (modal === legalModal) {
+        closeLegalModal(true);
+        return;
+      }
       closeModal(modal);
     }
   });
@@ -221,6 +294,26 @@ window.addEventListener('keydown', (event) => {
   if (event.key !== 'Escape') return;
   closeModal(leadModal);
   closeModal(floorModal);
+  closeLegalModal(true);
+});
+
+legalTabs.forEach((tab) => {
+  tab.addEventListener('click', () => {
+    const target = tab.getAttribute('data-legal-target');
+    if (!target) return;
+    openLegalModal(target, true);
+  });
+});
+
+legalLinks.forEach((link) => {
+  link.addEventListener('click', (event) => {
+    const targetHash = link.getAttribute('href');
+    if (!targetHash || !targetHash.startsWith('#')) return;
+    const target = targetHash.slice(1);
+    if (target !== 'privacy-policy' && target !== 'terms-conditions') return;
+    event.preventDefault();
+    openLegalModal(target, true);
+  });
 });
 
 const floorTabs = [...document.querySelectorAll('.floor-tab')];
@@ -292,3 +385,6 @@ document.addEventListener('mouseleave', (event) => {
 
   openLeadModal('Exit Intent Offer');
 });
+
+window.addEventListener('hashchange', syncLegalModalFromHash);
+syncLegalModalFromHash();
