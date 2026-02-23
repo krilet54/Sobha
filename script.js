@@ -364,7 +364,6 @@ const leadForms = document.querySelectorAll('.lead-form');
 const EMAILJS_PUBLIC_KEY = 'Nuwqa4o33MbqOfqJ_';
 const EMAILJS_SERVICE_ID = 'service_aojz74f';
 const EMAILJS_TEMPLATE_TO_OWNER = 'template_sz3v7mc';
-const EMAILJS_TEMPLATE_TO_USER = 'template_foh0nxr';
 const OWNER_EMAIL = 'abhinav787@gmail.com';
 
 // Initialize EmailJS if available. Some SDK builds expose `emailjs` on `window` or as a global.
@@ -402,41 +401,20 @@ leadForms.forEach((form) => {
       payload: JSON.stringify(data)
     };
 
-    // template parameters for user autoresponse
-    const userParams = {
-      user_name: data.name || '',
-      user_email: data.email || '',
-      email: data.email || '',
-      to_email: data.email || '',
-      message: 'Thank you for reaching out to us. We will contact you soon.',
-      payload: JSON.stringify(data)
-    };
-
-    // Send mail to owner first, then send auto-reply to user
+    // Send mail to owner only (client). No user autoresponse template configured.
     const sendOwner = () => {
       if (typeof emailjs === 'undefined' || typeof emailjs.send !== 'function') {
         return Promise.reject(new Error('EmailJS SDK not available'));
       }
       return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_TO_OWNER, ownerParams);
     };
-
-    const sendUser = () => {
-      // if user didn't provide email, skip auto-reply
-      if (!data.email) return Promise.resolve({ skipped: true });
-      return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_TO_USER, userParams);
-    };
-
-    // Send owner notification, then user auto-reply. Log responses for debugging delivery issues.
+    // Send owner notification only. Log response and continue to success flow.
     sendOwner()
       .then((ownerResp) => {
         console.log('EmailJS owner send response:', ownerResp);
-        return sendUser().then((userResp) => ({ ownerResp, userResp }));
-      })
-      .then(({ ownerResp, userResp }) => {
         try { form.reset(); } catch (e) {}
         closeModal(leadModal);
         closeModal(floorModal);
-        console.log('EmailJS user send response:', userResp);
         showToast('Submitted — redirecting...');
         // slight delay to ensure logs are flushed in some browsers
         setTimeout(() => { window.location.href = 'thank-you.html'; }, 350);
