@@ -453,7 +453,7 @@ leadForms.forEach((form) => {
 window.setTimeout(() => {
   if (leadModalPromptShown) return;
   openLeadModal('Limited Period Offer');
-}, 15000);
+}, 30000);
 
 // Desktop exit intent popup trigger for lead capture.
 document.addEventListener('mouseleave', (event) => {
