@@ -359,16 +359,93 @@ if (backToTopLink) {
 }
 
 const leadForms = document.querySelectorAll('.lead-form');
+// ---------- EmailJS integration for lead forms ----------
+// EmailJS credentials (inserted from user)
+const EMAILJS_PUBLIC_KEY = 'Nuwqa4o33MbqOfqJ_';
+const EMAILJS_SERVICE_ID = 'service_aojz74f';
+const EMAILJS_TEMPLATE_TO_OWNER = 'template_sz3v7mc';
+const EMAILJS_TEMPLATE_TO_USER = 'template_foh0nxr';
+const OWNER_EMAIL = 'abhinav787@gmail.com';
+
+// Initialize EmailJS if available. Some SDK builds expose `emailjs` on `window` or as a global.
+try {
+  if (typeof emailjs !== 'undefined' && typeof emailjs.init === 'function') {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  }
+} catch (e) {
+  console.warn('EmailJS init failed:', e);
+}
+
 leadForms.forEach((form) => {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
     const formName = form.getAttribute('data-form-name') || 'Form';
-    showToast(`${formName} submitted. Our team will call you shortly.`);
+    showToast('Submitting...');
 
-    form.reset();
-    closeModal(leadModal);
-    closeModal(floorModal);
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // template parameters for owner notification
+    // Include explicit recipient fields often used by EmailJS templates (e.g. `to_email`).
+    const ownerParams = {
+      form_name: formName,
+      name: data.name || '',
+      email: data.email || '',
+      mobile: data.mobile || '',
+      interest: data.interest || data.leadReason || '',
+      consent: data.consent ? 'Yes' : 'No',
+      submitted_at: new Date().toLocaleString(),
+      owner_email: OWNER_EMAIL,
+      to_email: OWNER_EMAIL,
+      // include raw payload for debugging if template expects other keys
+      payload: JSON.stringify(data)
+    };
+
+    // template parameters for user autoresponse
+    const userParams = {
+      user_name: data.name || '',
+      user_email: data.email || '',
+      email: data.email || '',
+      to_email: data.email || '',
+      message: 'Thank you for reaching out to us. We will contact you soon.',
+      payload: JSON.stringify(data)
+    };
+
+    // Send mail to owner first, then send auto-reply to user
+    const sendOwner = () => {
+      if (typeof emailjs === 'undefined' || typeof emailjs.send !== 'function') {
+        return Promise.reject(new Error('EmailJS SDK not available'));
+      }
+      return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_TO_OWNER, ownerParams);
+    };
+
+    const sendUser = () => {
+      // if user didn't provide email, skip auto-reply
+      if (!data.email) return Promise.resolve({ skipped: true });
+      return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_TO_USER, userParams);
+    };
+
+    // Send owner notification, then user auto-reply. Log responses for debugging delivery issues.
+    sendOwner()
+      .then((ownerResp) => {
+        console.log('EmailJS owner send response:', ownerResp);
+        return sendUser().then((userResp) => ({ ownerResp, userResp }));
+      })
+      .then(({ ownerResp, userResp }) => {
+        try { form.reset(); } catch (e) {}
+        closeModal(leadModal);
+        closeModal(floorModal);
+        console.log('EmailJS user send response:', userResp);
+        showToast('Submitted — redirecting...');
+        // slight delay to ensure logs are flushed in some browsers
+        setTimeout(() => { window.location.href = 'thank-you.html'; }, 350);
+      })
+      .catch((err) => {
+        console.error('EmailJS error:', err);
+        const errMsg = (err && (err.text || err.message)) ? (err.text || err.message) : 'Submission failed. Please try again.';
+        showToast(errMsg);
+      });
   });
 });
 
