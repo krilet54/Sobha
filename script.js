@@ -138,15 +138,31 @@ function closeLegalModal(updateHash = true) {
 }
 
 function syncLegalModalFromHash() {
-  if (!isLegalRoute()) {
+  const hash = window.location.hash || '';
+  if (!hash) {
     if (legalModal && legalModal.classList.contains('is-open')) {
       closeLegalModal(false);
     }
     return;
   }
 
-  const target = window.location.hash.replace('#', '');
-  openLegalModal(target, false);
+  if (isLegalRoute()) {
+    const target = hash.replace('#', '');
+    openLegalModal(target, false);
+    return;
+  }
+
+  // Non-legal hash: close legal modal if open and scroll to the section
+  if (legalModal && legalModal.classList.contains('is-open')) {
+    closeLegalModal(false);
+  }
+
+  const sectionId = hash;
+  const el = document.querySelector(sectionId);
+  if (el) {
+    scrollToSection(sectionId);
+    activateNavLink(sectionId.replace('#', ''));
+  }
 }
 
 function showToast(message) {
@@ -206,6 +222,13 @@ navLinks.forEach((link) => {
     if (!id || !id.startsWith('#')) return;
     event.preventDefault();
     scrollToSection(id);
+    // update the URL hash so each section has its own address
+    try {
+      history.pushState(null, '', id);
+    } catch (e) {
+      // fallback for very old browsers
+      window.location.hash = id;
+    }
     setMenuState(false);
   });
 });
