@@ -909,6 +909,7 @@ p {
 .amenity-retail { --amenity-image: url("sobha brdidgekeys images/amenities/retail-plazas.jpg"); }
 .amenity-tennis { --amenity-image: url("sobha brdidgekeys images/amenities/pool.jpg"); }
 .amenity-gym { --amenity-image: url("sobha brdidgekeys images/amenities/outdoor-gym.jpg"); }
+.amenity-clubhouse { --amenity-image: url("sobha brdidgekeys images/1522.jpg"); }
 
 .floor-tabs {
   display: flex;
